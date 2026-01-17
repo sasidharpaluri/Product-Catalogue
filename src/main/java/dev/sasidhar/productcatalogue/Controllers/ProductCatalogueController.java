@@ -1,7 +1,11 @@
 package dev.sasidhar.productcatalogue.Controllers;
 
-import dev.sasidhar.productcatalogue.DTOs.ProductRequestDTO;
-import dev.sasidhar.productcatalogue.DTOs.ProductResponseDTO;
+import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
+import dev.sasidhar.productcatalogue.DTOs.CategoryDTO;
+import dev.sasidhar.productcatalogue.Models.Product;
+import dev.sasidhar.productcatalogue.Service.IProductservice;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,26 +22,36 @@ import java.util.List;
 
 @RestController
 public class ProductCatalogueController {
+    private IProductservice productService;
 
+    public ProductCatalogueController(IProductservice productService) {
+        this.productService = productService;
+    }
     @PostMapping("/products")
-    ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
-        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
+    ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
+        ProductDTO prductResponseDTO = new ProductDTO();
           /*
         call the service layer to save the product
          */
-        return productResponseDTO;
+        return prductResponseDTO;
     }
     @GetMapping("/products/{id}")
-    ProductResponseDTO getProductbyID(@PathVariable("id") int id) {
-        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-          /*
-        call the service layer to get the product with id
-         */
-        return productResponseDTO;
+    ResponseEntity<ProductDTO> getProductbyID(@PathVariable("id") int id) {
+        if(id < 1){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        Product product = productService.getProductById(id);
+
+        if(product == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(product.convert(), HttpStatus.OK);
     }
 
-    List<ProductResponseDTO> getAllProducts() {
-        List<ProductResponseDTO> products = new ArrayList<>();
+    @GetMapping("/products")
+    List<CategoryDTO> getAllProducts() {
+        List<CategoryDTO> products = new ArrayList<>();
           /*
         call the service layer to get all products
          */
