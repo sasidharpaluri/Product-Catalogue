@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
  /*
     Create product ("/products"), POST
@@ -50,12 +51,14 @@ public class ProductCatalogueController {
     }
 
     @GetMapping("/products")
-    List<CategoryDTO> getAllProducts() {
-        List<CategoryDTO> products = new ArrayList<>();
-          /*
-        call the service layer to get all products
-         */
-        return products;
+    ResponseEntity<List<ProductDTO>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        if(products.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        // Convert List<Product> to List<ProductDTO>
+        return new ResponseEntity<>(products.stream().map(Product::convert).toList(),HttpStatus.OK);
+       // return productService.getAllProducts().stream().map(Product::convert).toList();
     }
 
     // - for basic API Testing -//

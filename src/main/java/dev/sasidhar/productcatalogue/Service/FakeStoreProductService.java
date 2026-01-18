@@ -19,6 +19,13 @@ public class FakeStoreProductService implements IProductservice {
 
     @Override
     public List<Product> getAllProducts() {
+        ResponseEntity<FakeStoreProductDTO[]> response = restTemplate.getForEntity("https://fakestoreapi.com/products", FakeStoreProductDTO[].class);
+        if(response.hasBody() && response.getStatusCode().equals(HttpStatusCode.valueOf(200))) {
+            FakeStoreProductDTO[] fakeStoreProductDTOs = response.getBody();
+            if (fakeStoreProductDTOs != null) {
+                return List.of(fakeStoreProductDTOs).stream().map(FakeStoreProductDTO::convert).toList();
+            }
+        }
         return List.of();
     }
 
