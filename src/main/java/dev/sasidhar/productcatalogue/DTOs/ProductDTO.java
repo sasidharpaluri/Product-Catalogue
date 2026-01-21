@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 public class ProductDTO {
-    private int productId;
+    private int id;
     private String name;
     private String description;
     private double price;
@@ -19,7 +19,7 @@ public class ProductDTO {
 
     public Product convert() {
         Product p = new Product();
-        p.setId(this.productId);
+        p.setId(this.id);
         p.setName(this.name);
         p.setDescription(this.description);
         p.setPrice(this.price);

@@ -17,7 +17,7 @@ public class Product extends BaseModel {
 
     public ProductDTO convert() {
         ProductDTO dto = new ProductDTO();
-        dto.setProductId(this.getId());
+        dto.setId(this.getId());
         dto.setName(this.name);
         dto.setDescription(this.description);
         dto.setPrice(this.price);
