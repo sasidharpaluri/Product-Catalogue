@@ -1,5 +1,6 @@
 package dev.sasidhar.productcatalogue.Models;
 
+import dev.sasidhar.productcatalogue.DTOs.FakeStoreProductDTO;
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,20 @@ public class Product extends BaseModel {
         dto.setPrice(this.price);
         dto.setImage(this.image);
         if (this.category != null) {
-            dto.setCategory(this.category);
+            dto.setCategory(this.category.convert());
+        }
+        return dto;
+    }
+    public FakeStoreProductDTO convertToFake() {
+        FakeStoreProductDTO dto = new FakeStoreProductDTO();
+        dto.setId(this.getId());
+        dto.setTitle(this.name);
+        dto.setDescription(this.description);
+        dto.setPrice(this.price);
+        dto.setImage(this.image);
+
+        if (this.category != null) {
+            dto.setCategory(this.category.getName());
         }
         return dto;
     }

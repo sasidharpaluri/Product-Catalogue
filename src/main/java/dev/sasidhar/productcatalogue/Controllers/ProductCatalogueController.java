@@ -28,6 +28,7 @@ public class ProductCatalogueController {
     public ProductCatalogueController(IProductservice productService) {
         this.productService = productService;
     }
+
     @PostMapping("/products")
     ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
         ProductDTO prductResponseDTO = new ProductDTO();
@@ -41,9 +42,7 @@ public class ProductCatalogueController {
         if(id < 1){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
-
         Product product = productService.getProductById(id);
-
         if(product == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -59,6 +58,16 @@ public class ProductCatalogueController {
         // Convert List<Product> to List<ProductDTO>
         return new ResponseEntity<>(products.stream().map(Product::convert).toList(),HttpStatus.OK);
        // return productService.getAllProducts().stream().map(Product::convert).toList();
+    }
+
+    @PutMapping("/products/{id}")
+    ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") int id,
+                                             @RequestBody ProductDTO productDTO) {
+        Product product = productService.updateProduct(id, productDTO.convert());
+        if(product == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(product.convert(),HttpStatus.OK);
     }
 
     // - for basic API Testing -//
