@@ -2,16 +2,22 @@ package dev.sasidhar.productcatalogue.Models;
 
 import dev.sasidhar.productcatalogue.DTOs.FakeStoreProductDTO;
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
+@Entity
 public class Product extends BaseModel {
     private String name;
     private String description;
     private double price;
+    //@ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Category category;
     private String image;
 
@@ -36,7 +42,7 @@ public class Product extends BaseModel {
         dto.setImage(this.image);
 
         if (this.category != null) {
-            dto.setCategory(this.category.getName());
+            dto.setCategory(this.category.getTitle());
         }
         return dto;
     }

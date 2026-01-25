@@ -72,6 +72,19 @@ public class FakeStoreProductService implements IProductservice {
 
     @Override
     public Product createProduct(Product product) {
+        FakeStoreProductDTO requestBody = product.convertToFake();
+        ResponseEntity<FakeStoreProductDTO> response = webClient.post()
+                .uri("https://fakestoreapi.com/products")
+                .bodyValue(requestBody)
+                .retrieve()
+                .toEntity(FakeStoreProductDTO.class)
+                .block();
+
+        if(response != null && response.hasBody() && response.getStatusCode().equals(HttpStatusCode.valueOf(201))){
+            FakeStoreProductDTO dto = response.getBody();
+            if(dto != null)
+                return dto.convert();
+        }
         return null;
     }
 

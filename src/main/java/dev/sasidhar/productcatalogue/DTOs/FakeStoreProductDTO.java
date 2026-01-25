@@ -3,6 +3,7 @@ package dev.sasidhar.productcatalogue.DTOs;
 
 import dev.sasidhar.productcatalogue.Models.Category;
 import dev.sasidhar.productcatalogue.Models.Product;
+import dev.sasidhar.productcatalogue.Models.State;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class FakeStoreProductDTO {
         p.setDescription(this.description);
         p.setName(this.title);
         Category c = new Category();
-            c.setName(this.category);
+            c.setTitle(this.category);
         p.setCategory(c);
         p.setImage(this.image);
         return p;

@@ -5,6 +5,7 @@ import dev.sasidhar.productcatalogue.DTOs.CategoryDTO;
 import dev.sasidhar.productcatalogue.Models.Product;
 import dev.sasidhar.productcatalogue.Service.IProductservice;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,12 +31,10 @@ public class ProductCatalogueController {
     }
 
     @PostMapping("/products")
-    ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
-        ProductDTO prductResponseDTO = new ProductDTO();
-          /*
-        call the service layer to save the product
-         */
-        return prductResponseDTO;
+    ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
+       // ProductDTO prductResponseDTO = new ProductDTO();
+        Product product = productService.createProduct(productDTO.convert());
+        return new ResponseEntity<>(product.convert(),HttpStatus.CREATED);
     }
     @GetMapping("/products/{id}")
     ResponseEntity<ProductDTO> getProductbyID(@PathVariable("id") int id) {
