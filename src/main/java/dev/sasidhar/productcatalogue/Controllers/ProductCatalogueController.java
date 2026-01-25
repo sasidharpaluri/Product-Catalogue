@@ -40,7 +40,7 @@ public class ProductCatalogueController {
     @GetMapping("/products/{id}")
     ResponseEntity<ProductDTO> getProductbyID(@PathVariable("id") int id) {
         if(id < 1){
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            throw new IllegalArgumentException("Product ID must be greater than zero");
         }
         Product product = productService.getProductById(id);
         if(product == null){
