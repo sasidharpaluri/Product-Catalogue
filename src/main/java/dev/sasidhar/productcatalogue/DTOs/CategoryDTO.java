@@ -16,21 +16,12 @@ public class CategoryDTO {
     private int categoryId;
     private String categoryName;
     private State categoryState;
-    private List<ProductDTO> products;
 
     public Category convert() {
         Category category = new Category();
         category.setId(this.categoryId);
         category.setState(this.categoryState);
         category.setTitle(this.categoryName);
-        if(this.products != null) {
-            List<Product> productList = this.products.stream()
-                    .map(ProductDTO::convert)
-                    .toList();
-            category.setProducts(productList);
-        } else {
-            category.setProducts(null);
-        }
         return category;
     }
 }

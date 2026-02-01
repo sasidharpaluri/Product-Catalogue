@@ -4,6 +4,7 @@ import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
 import dev.sasidhar.productcatalogue.DTOs.CategoryDTO;
 import dev.sasidhar.productcatalogue.Models.Product;
 import dev.sasidhar.productcatalogue.Service.IProductservice;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 public class ProductCatalogueController {
     private IProductservice productService;
 
-    public ProductCatalogueController(IProductservice productService) {
+    public ProductCatalogueController(@Qualifier("storageProductService") IProductservice productService) {
         this.productService = productService;
     }
 
@@ -68,7 +69,13 @@ public class ProductCatalogueController {
         }
         return new ResponseEntity<>(product.convert(),HttpStatus.OK);
     }
-
+    @DeleteMapping("/products/{id}")
+    ResponseEntity<Boolean> deleteProduct(@PathVariable("id") int id){
+        Boolean result = productService.deleteProduct(id);
+        if(result == true)
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        return new ResponseEntity<>(false,HttpStatus.NOT_FOUND);
+    }
     // - for basic API Testing -//
     @GetMapping("/hello")
     String sayHello() {

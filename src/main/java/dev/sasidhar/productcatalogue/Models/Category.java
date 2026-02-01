@@ -15,18 +15,16 @@ import java.util.*;
 @Entity
 public class Category extends BaseModel{
     private String title;
-    @OneToMany(mappedBy = "category")
-    private List<Product> products;
 
     public CategoryDTO convert(){
         CategoryDTO dto = new CategoryDTO();
         dto.setCategoryId(this.getId());
         dto.setCategoryName(this.title);
-        if(this.products != null){
-            List<ProductDTO> p = this.products.stream().map(Product::convert).toList();
-            dto.setProducts(p);
-        }
-        dto.setProducts(null);
+//        if(this.products != null){
+//            List<ProductDTO> p = this.products.stream().map(Product::convert).toList();
+//            dto.setProducts(p);
+//        }
+//        dto.setProducts(null);
         return dto;
     }
 }

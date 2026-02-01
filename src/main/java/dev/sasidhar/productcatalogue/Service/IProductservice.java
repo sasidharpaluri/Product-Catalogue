@@ -9,5 +9,6 @@ public interface IProductservice {
     public Product getProductById(int id);
     public Product createProduct(Product product);
     public Product updateProduct(int id,Product product);
+    public Boolean deleteProduct(int id);
 
 }

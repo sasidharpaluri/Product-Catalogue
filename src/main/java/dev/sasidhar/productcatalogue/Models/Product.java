@@ -20,6 +20,7 @@ public class Product extends BaseModel {
     @ManyToOne
     private Category category;
     private String image;
+    private State state;
 
     public ProductDTO convert() {
         ProductDTO dto = new ProductDTO();
@@ -27,6 +28,7 @@ public class Product extends BaseModel {
         dto.setName(this.name);
         dto.setDescription(this.description);
         dto.setPrice(this.price);
+        dto.setState(this.state);
         dto.setImage(this.image);
         if (this.category != null) {
             dto.setCategory(this.category.convert());
