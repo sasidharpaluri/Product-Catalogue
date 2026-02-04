@@ -1,6 +1,5 @@
 package dev.sasidhar.productcatalogue.Models;
 
-import dev.sasidhar.productcatalogue.DTOs.CategoryDTO;
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -14,17 +13,5 @@ import java.util.*;
 @Getter
 @Entity
 public class Category extends BaseModel{
-    private String title;
-
-    public CategoryDTO convert(){
-        CategoryDTO dto = new CategoryDTO();
-        dto.setCategoryId(this.getId());
-        dto.setCategoryName(this.title);
-//        if(this.products != null){
-//            List<ProductDTO> p = this.products.stream().map(Product::convert).toList();
-//            dto.setProducts(p);
-//        }
-//        dto.setProducts(null);
-        return dto;
-    }
+    private String name;
 }

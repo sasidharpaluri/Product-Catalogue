@@ -1,6 +1,5 @@
 package dev.sasidhar.productcatalogue.Models;
 
-import dev.sasidhar.productcatalogue.DTOs.FakeStoreProductDTO;
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,6 +20,7 @@ public class Product extends BaseModel {
     private Category category;
     private String image;
     private State state;
+    private String type;
 
     public ProductDTO convert() {
         ProductDTO dto = new ProductDTO();
@@ -28,23 +28,11 @@ public class Product extends BaseModel {
         dto.setName(this.name);
         dto.setDescription(this.description);
         dto.setPrice(this.price);
-        dto.setState(this.state);
+        dto.setType(this.type);
         dto.setImage(this.image);
         if (this.category != null) {
-            dto.setCategory(this.category.convert());
-        }
-        return dto;
-    }
-    public FakeStoreProductDTO convertToFake() {
-        FakeStoreProductDTO dto = new FakeStoreProductDTO();
-        dto.setId(this.getId());
-        dto.setTitle(this.name);
-        dto.setDescription(this.description);
-        dto.setPrice(this.price);
-        dto.setImage(this.image);
-
-        if (this.category != null) {
-            dto.setCategory(this.category.getTitle());
+            dto.setCategory(this.category.getId());
+            dto.setCategoryType(this.category.getName());
         }
         return dto;
     }

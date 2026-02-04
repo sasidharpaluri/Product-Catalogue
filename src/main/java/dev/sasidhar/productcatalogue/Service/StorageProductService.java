@@ -1,7 +1,10 @@
 package dev.sasidhar.productcatalogue.Service;
 
+import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
+import dev.sasidhar.productcatalogue.Models.Category;
 import dev.sasidhar.productcatalogue.Models.Product;
 import dev.sasidhar.productcatalogue.Models.State;
+import dev.sasidhar.productcatalogue.Repositories.CategoryRepository;
 import dev.sasidhar.productcatalogue.Repositories.ProductRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -12,9 +15,11 @@ import java.util.Optional;
 @Service
 public class StorageProductService implements IProductservice {
     private ProductRepository prodrepo;
+    private CategoryRepository catrepo;
 
-    public StorageProductService(ProductRepository prodrepo) {
+    public StorageProductService(ProductRepository prodrepo,CategoryRepository catrepo) {
         this.prodrepo = prodrepo;
+        this.catrepo = catrepo;
     }
 
     @Override
@@ -33,9 +38,20 @@ public class StorageProductService implements IProductservice {
     }
 
     @Override
-    public Product createProduct(Product product) {
-        if(prodrepo.findById(product.getId()).isEmpty()) {
-            return prodrepo.save(product);
+    public Product createProduct(ProductDTO productDTO) {
+        Category category = catrepo.findById(productDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        Product p = new Product();
+        p.setId(productDTO.getId());
+        p.setName(productDTO.getName());
+        p.setDescription(productDTO.getDescription());
+        p.setPrice(productDTO.getPrice());
+        p.setImage(productDTO.getImage());
+        p.setState(State.ACTIVE);
+        p.setType(productDTO.getType());
+        p.setCategory(category);
+        if(prodrepo.findById(p.getId()).isEmpty()) {
+            return prodrepo.save(p);
         }
         else
             return null;
@@ -43,12 +59,25 @@ public class StorageProductService implements IProductservice {
     }
 
     @Override
-    public Product updateProduct(int id, Product product) {
+    public Product updateProduct(int id, ProductDTO productDTO) {
+
         Product existingProd = getProductById(id);
+
         if( existingProd != null){
-            product.setId(id);
-            product.setCreatedAt(existingProd.getCreatedAt());
-            return prodrepo.save(product);
+            /// ////////////////////////////////
+            Optional<Category> category = catrepo.findById(productDTO.getId());
+
+            Product p = new Product();
+            p.setId(existingProd.getId());
+            p.setCreatedAt(existingProd.getCreatedAt());
+            p.setName(productDTO.getName());
+            p.setDescription(productDTO.getDescription());
+            p.setPrice(productDTO.getPrice());
+            p.setImage(productDTO.getImage());
+            p.setType(productDTO.getType());
+            p.setCategory(category.get());
+        /// ////////////////////////////////////////////////
+            return prodrepo.save(p);
 
         }
         else

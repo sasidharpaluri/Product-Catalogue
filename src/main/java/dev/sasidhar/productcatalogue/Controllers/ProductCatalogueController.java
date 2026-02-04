@@ -1,7 +1,6 @@
 package dev.sasidhar.productcatalogue.Controllers;
 
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
-import dev.sasidhar.productcatalogue.DTOs.CategoryDTO;
 import dev.sasidhar.productcatalogue.Models.Product;
 import dev.sasidhar.productcatalogue.Service.IProductservice;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +33,7 @@ public class ProductCatalogueController {
     @PostMapping("/products")
     ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
        // ProductDTO prductResponseDTO = new ProductDTO();
-        Product product = productService.createProduct(productDTO.convert());
+        Product product = productService.createProduct(productDTO);
         return new ResponseEntity<>(product.convert(),HttpStatus.CREATED);
     }
     @GetMapping("/products/{id}")
@@ -63,7 +62,7 @@ public class ProductCatalogueController {
     @PutMapping("/products/{id}")
     ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") int id,
                                              @RequestBody ProductDTO productDTO) {
-        Product product = productService.updateProduct(id, productDTO.convert());
+        Product product = productService.updateProduct(id, productDTO);
         if(product == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -72,7 +71,7 @@ public class ProductCatalogueController {
     @DeleteMapping("/products/{id}")
     ResponseEntity<Boolean> deleteProduct(@PathVariable("id") int id){
         Boolean result = productService.deleteProduct(id);
-        if(result == true)
+        if(result)
             return new ResponseEntity<>(true,HttpStatus.OK);
         return new ResponseEntity<>(false,HttpStatus.NOT_FOUND);
     }
