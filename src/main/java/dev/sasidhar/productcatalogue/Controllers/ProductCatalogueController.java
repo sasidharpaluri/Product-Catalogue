@@ -34,6 +34,8 @@ public class ProductCatalogueController {
     ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
        // ProductDTO prductResponseDTO = new ProductDTO();
         Product product = productService.createProduct(productDTO);
+        if(product == null)
+                throw new IllegalArgumentException("Product already exists");
         return new ResponseEntity<>(product.convert(),HttpStatus.CREATED);
     }
     @GetMapping("/products/{id}")
@@ -59,7 +61,7 @@ public class ProductCatalogueController {
        // return productService.getAllProducts().stream().map(Product::convert).toList();
     }
 
-    @PutMapping("/products/{id}")
+    @PatchMapping("/products/{id}")
     ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") int id,
                                              @RequestBody ProductDTO productDTO) {
         Product product = productService.updateProduct(id, productDTO);
@@ -68,7 +70,7 @@ public class ProductCatalogueController {
         }
         return new ResponseEntity<>(product.convert(),HttpStatus.OK);
     }
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping("/products/{id}") // just sets the product state to DELETED, Actual delete is not done
     ResponseEntity<Boolean> deleteProduct(@PathVariable("id") int id){
         Boolean result = productService.deleteProduct(id);
         if(result)

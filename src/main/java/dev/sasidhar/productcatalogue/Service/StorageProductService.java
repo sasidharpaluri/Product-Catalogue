@@ -14,8 +14,8 @@ import java.util.Optional;
 
 @Service
 public class StorageProductService implements IProductservice {
-    private ProductRepository prodrepo;
-    private CategoryRepository catrepo;
+    private final ProductRepository prodrepo;
+    private final CategoryRepository catrepo;
 
     public StorageProductService(ProductRepository prodrepo,CategoryRepository catrepo) {
         this.prodrepo = prodrepo;
@@ -39,7 +39,7 @@ public class StorageProductService implements IProductservice {
 
     @Override
     public Product createProduct(ProductDTO productDTO) {
-        Category category = catrepo.findById(productDTO.getId())
+        Category category = catrepo.findById(productDTO.getCategory())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Product p = new Product();
         p.setId(productDTO.getId());
@@ -65,19 +65,23 @@ public class StorageProductService implements IProductservice {
 
         if( existingProd != null){
             /// ////////////////////////////////
-            Optional<Category> category = catrepo.findById(productDTO.getId());
+            Optional<Category> category = catrepo.findById(productDTO.getCategory());
 
-            Product p = new Product();
-            p.setId(existingProd.getId());
-            p.setCreatedAt(existingProd.getCreatedAt());
-            p.setName(productDTO.getName());
-            p.setDescription(productDTO.getDescription());
-            p.setPrice(productDTO.getPrice());
-            p.setImage(productDTO.getImage());
-            p.setType(productDTO.getType());
-            p.setCategory(category.get());
-        /// ////////////////////////////////////////////////
-            return prodrepo.save(p);
+            if(productDTO.getDescription() != null)
+                existingProd.setDescription(productDTO.getDescription());
+            if(productDTO.getImage() != null)
+                existingProd.setImage(productDTO.getImage());
+            if(productDTO.getName() != null)
+                existingProd.setName(productDTO.getName());
+            if(productDTO.getPrice() != 0)
+                existingProd.setPrice(productDTO.getPrice());
+            if(productDTO.getType() != null)
+                existingProd.setType(productDTO.getType());
+            if (!category.isEmpty())
+                existingProd.setCategory(category.get());
+
+            ///////////////////////////////////////////////////
+            return prodrepo.save(existingProd);
 
         }
         else
@@ -91,6 +95,6 @@ public class StorageProductService implements IProductservice {
             return true;
         }
         else
-            return true;
+            return false;
     }
 }
