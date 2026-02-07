@@ -3,9 +3,11 @@ package dev.sasidhar.productcatalogue.Models;
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 import org.springframework.stereotype.Component;
 
 @Getter

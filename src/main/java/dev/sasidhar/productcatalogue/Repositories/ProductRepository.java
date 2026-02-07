@@ -25,11 +25,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> getGreaterThan(@Param("price") double price);
 
     @Query("""
-SELECT p
-FROM Product p
-WHERE p.category.name = :name
-ORDER BY p.price DESC
-""")
+            SELECT p
+            FROM Product p
+            WHERE p.category.name = :name
+            ORDER BY p.price DESC
+            """)
     List<Product> getByCategoryName(@Param("name") String name);
 
 }
