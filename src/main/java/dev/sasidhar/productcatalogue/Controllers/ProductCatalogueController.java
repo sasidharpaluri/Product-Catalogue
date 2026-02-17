@@ -1,11 +1,13 @@
 package dev.sasidhar.productcatalogue.Controllers;
 
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
-import dev.sasidhar.productcatalogue.DTOs.CategoryDTO;
 import dev.sasidhar.productcatalogue.Models.Product;
 import dev.sasidhar.productcatalogue.Service.IProductservice;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,17 +32,17 @@ public class ProductCatalogueController {
     }
 
     @PostMapping("/products")
-    ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
-        ProductDTO prductResponseDTO = new ProductDTO();
-          /*
-        call the service layer to save the product
-         */
-        return prductResponseDTO;
+    ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
+       // ProductDTO prductResponseDTO = new ProductDTO();
+        Product product = productService.createProduct(productDTO);
+        if(product == null)
+                throw new IllegalArgumentException("Product already exists");
+        return new ResponseEntity<>(product.convert(),HttpStatus.CREATED);
     }
     @GetMapping("/products/{id}")
     ResponseEntity<ProductDTO> getProductbyID(@PathVariable("id") int id) {
         if(id < 1){
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            throw new IllegalArgumentException("Product ID must be greater than zero");
         }
         Product product = productService.getProductById(id);
         if(product == null){
@@ -60,16 +62,22 @@ public class ProductCatalogueController {
        // return productService.getAllProducts().stream().map(Product::convert).toList();
     }
 
-    @PutMapping("/products/{id}")
+    @PatchMapping("/products/{id}")
     ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") int id,
                                              @RequestBody ProductDTO productDTO) {
-        Product product = productService.updateProduct(id, productDTO.convert());
+        Product product = productService.updateProduct(id, productDTO);
         if(product == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(product.convert(),HttpStatus.OK);
     }
-
+    @DeleteMapping("/products/{id}") // just sets the product state to DELETED, Actual delete is not done
+    ResponseEntity<Boolean> deleteProduct(@PathVariable("id") int id){
+        Boolean result = productService.deleteProduct(id);
+        if(result)
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        return new ResponseEntity<>(false,HttpStatus.NOT_FOUND);
+    }
     // - for basic API Testing -//
     @GetMapping("/hello")
     String sayHello() {
