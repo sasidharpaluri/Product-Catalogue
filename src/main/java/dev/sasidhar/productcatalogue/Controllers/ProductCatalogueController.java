@@ -1,6 +1,8 @@
 package dev.sasidhar.productcatalogue.Controllers;
 
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
+import dev.sasidhar.productcatalogue.DTOs.ValidateTokenDto;
+import dev.sasidhar.productcatalogue.Exceptions.LoginExpired;
 import dev.sasidhar.productcatalogue.Models.Product;
 import dev.sasidhar.productcatalogue.Service.IProductservice;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +29,42 @@ import java.util.stream.Stream;
 @RestController
 public class ProductCatalogueController {
     private IProductservice productService;
+    private RestTemplate restTemplate;
 
-    public ProductCatalogueController(IProductservice productService) {
+    public ProductCatalogueController(IProductservice productService, RestTemplate restTemplate) {
         this.productService = productService;
+        this.restTemplate = restTemplate;
+    }
+
+    private boolean validateToken(String token) {
+        try {
+            String url = "http://localhost:8080/User/validateToken";
+            ValidateTokenDto dto = new ValidateTokenDto(token);
+            ResponseEntity<String> response = restTemplate.postForEntity(url, dto, String.class);
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean validateAdminToken(String token) {
+        try {
+            String url = "http://localhost:8080/User/validateAdminToken";
+            ValidateTokenDto dto = new ValidateTokenDto(token);
+            ResponseEntity<String> response = restTemplate.postForEntity(url, dto, String.class);
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @PostMapping("/products")
-    ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
-       // ProductDTO prductResponseDTO = new ProductDTO();
+    ResponseEntity<ProductDTO> createProduct(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody ProductDTO productDTO) {
+        if(token == null || !validateAdminToken(token)) {
+            throw new LoginExpired("Please login again to continue");
+        }
         Product product = productService.createProduct(productDTO);
         if(product == null)
                 throw new IllegalArgumentException("Product already exists");
@@ -71,8 +102,13 @@ public class ProductCatalogueController {
         }
         return new ResponseEntity<>(product.convert(),HttpStatus.OK);
     }
-    @DeleteMapping("/products/{id}") // just sets the product state to DELETED, Actual delete is not done
-    ResponseEntity<Boolean> deleteProduct(@PathVariable("id") int id){
+    @DeleteMapping("/products/{id}")
+    ResponseEntity<Boolean> deleteProduct(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable("id") int id){
+        if(token == null || !validateAdminToken(token)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Boolean result = productService.deleteProduct(id);
         if(result)
             return new ResponseEntity<>(true,HttpStatus.OK);
