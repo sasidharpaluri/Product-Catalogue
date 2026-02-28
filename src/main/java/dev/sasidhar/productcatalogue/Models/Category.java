@@ -1,5 +1,6 @@
 package dev.sasidhar.productcatalogue.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.sasidhar.productcatalogue.DTOs.ProductDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,6 +19,7 @@ import java.util.*;
 @Entity
 public class Category extends BaseModel{
     private String name;
+    @JsonIgnore
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     @Fetch(FetchMode.JOIN)
     @BatchSize(size = -60)
